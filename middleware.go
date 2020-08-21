@@ -67,7 +67,7 @@ func (c Middleware) Prepend(other Middleware) Middleware {
 }
 
 //Assemble can be used to chain an arbitrary number of middlewares
-//  middlewares := := middleware.Assemble(middlewareA, middlewareB, middlewareC)
+//  middlewares := middleware.Assemble(middlewareA, middlewareB, middlewareC)
 func Assemble(middlewares ...Middleware) Middleware {
 	assembly := New()
 	for _, middleware := range middlewares {
