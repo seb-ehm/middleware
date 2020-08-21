@@ -37,7 +37,7 @@ func End() http.Handler {
 //Using them as follows:
 //  mux := http.NewServeMux()
 //  greetings := middleware.New().Append(hello)
-//	greetings = greetings.Append(namaste)
+//  greetings = greetings.Append(namaste)
 //  mux.Handle("/greetings", greetings(middleware.End())
 //Will result in the following output:
 //  Hello!
