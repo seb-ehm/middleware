@@ -61,8 +61,8 @@ func (m Middleware) Append(other Middleware) Middleware {
 //Will result in the following output:
 //  Namaste!
 //  Hello!
-func (c Middleware) Prepend(other Middleware) Middleware {
-	return other.Append(c)
+func (m Middleware) Prepend(other Middleware) Middleware {
+	return other.Append(m)
 }
 
 //Assemble can be used to chain an arbitrary number of middlewares
@@ -82,6 +82,6 @@ func Assemble(middlewares ...Middleware) Middleware {
 //	}
 //  middlewares := := middleware.Assemble(middlewareA, middlewareB, middlewareC)
 //  mux.Handle("/endpoint", middlewares.ApplyToFunc(handler))
-func (c Middleware) ApplyToFunc(fun http.HandlerFunc) http.Handler {
-	return c(fun)
+func (m Middleware) ApplyToFunc(fun http.HandlerFunc) http.Handler {
+	return m(fun)
 }
