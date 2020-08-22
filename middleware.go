@@ -78,8 +78,8 @@ func Assemble(middlewares ...Middleware) Middleware {
 
 //ApplyToFunc is a convenience function to apply middleware to a HandlerFunc:
 //  mux := http.NewServeMux()
-//	handler := func(w http.ResponseWriter, r *http.Request) {
-//		fmt.Fprintf(w, "Hi!")
+//  handler := func(w http.ResponseWriter, r *http.Request) {
+//  	fmt.Fprintf(w, "Hi!")
 //	}
 //  middlewares := := middleware.Assemble(middlewareA, middlewareB, middlewareC)
 //  mux.Handle("/endpoint", middlewares.ApplyToFunc(handler))
