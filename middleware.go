@@ -20,16 +20,6 @@ func New() Middleware {
 	}
 }
 
-//End returns a handler that does nothing, which can be used to end a chain of middlewares if no further
-//output is wanted:
-//  mux := http.NewServeMux()
-//  middlewares := middleware.New().Append(someMiddleware)
-//  middlewares =  middlewares.Append(someOtherMiddleware)
-//  mux.Handle("/endpoint", middlewares(middleware.End()))
-func End() http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {})
-}
-
 //Append adds another middleware to the end of the middleware stack.
 //Given two middlewares that print greetings to stdout:
 //  hello := getGreeting("Hello!")
@@ -84,4 +74,13 @@ func Assemble(middlewares ...Middleware) Middleware {
 //  mux.Handle("/endpoint", middlewares.ApplyToFunc(handler))
 func (m Middleware) ApplyToFunc(fun http.HandlerFunc) http.Handler {
 	return m(fun)
+}
+
+//Serve can be used to directly use a chain of middlewares without a final handler.
+//  mux := http.NewServeMux()
+//  middlewares := middleware.New().Append(someMiddleware)
+//  middlewares =  middlewares.Append(someOtherMiddleware)
+//  mux.Handle("/endpoint", middlewares.Serve())
+func (m Middleware) Serve() http.Handler {
+	return m(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {}))
 }
