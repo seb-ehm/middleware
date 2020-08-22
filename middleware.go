@@ -42,10 +42,9 @@ func End() http.Handler {
 //Will result in the following output:
 //  Hello!
 //  Namaste!
-func (c Middleware) Append(other Middleware) Middleware {
-	oldMiddleware := c
+func (m Middleware) Append(other Middleware) Middleware {
 	newMiddleware := func(hf http.Handler) http.Handler {
-		return oldMiddleware(other(hf))
+		return m(other(hf))
 	}
 	return newMiddleware
 }
