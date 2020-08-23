@@ -30,7 +30,7 @@ func Test_MiddlewareAssemble(t *testing.T) {
 
 	middlewares := middleware.Assemble(hello, namaste, hello)
 	mock := new(MockResponseWriter)
-	middlewares.Serve().ServeHTTP(mock, nil)
+	middlewares.ServeHTTP(mock, nil)
 	got := mock.output
 	want := "Hello!\nNamaste!\nHello!\n"
 
@@ -48,7 +48,7 @@ func Test_MiddlewarePrepend(t *testing.T) {
 
 	middlewares := middleware.Middleware(hello).Prepend(namaste)
 	mock := new(MockResponseWriter)
-	middlewares.Serve().ServeHTTP(mock, nil)
+	middlewares.ServeHTTP(mock, nil)
 	got := mock.output
 	want := "Namaste!\nHello!\n"
 
@@ -66,7 +66,7 @@ func Test_MiddlewareAppend(t *testing.T) {
 
 	middlewares := middleware.Middleware(hello).Append(namaste)
 	mock := new(MockResponseWriter)
-	middlewares.Serve().ServeHTTP(mock, nil)
+	middlewares.ServeHTTP(mock, nil)
 	got := mock.output
 	want := "Hello!\nNamaste!\n"
 

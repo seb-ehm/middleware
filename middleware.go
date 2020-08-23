@@ -76,11 +76,10 @@ func (m Middleware) ApplyToFunc(fun http.HandlerFunc) http.Handler {
 	return m(fun)
 }
 
-//Serve can be used to directly use a chain of middlewares without a final handler.
+//ServeHTTP implements the http.Handler interface with a no-op, thus any middleware
+//can be used as a handler in a mux without an explicit final handler.
 //  mux := http.NewServeMux()
-//  middlewares := middleware.New().Append(someMiddleware)
-//  middlewares =  middlewares.Append(someOtherMiddleware)
-//  mux.Handle("/endpoint", middlewares.Serve())
-func (m Middleware) Serve() http.Handler {
-	return m(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {}))
+//  mux.Handle("/endpoint", someMiddleware)
+func (m Middleware) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	m(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {})).ServeHTTP(w, r)
 }

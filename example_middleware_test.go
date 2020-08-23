@@ -65,9 +65,10 @@ func ExampleMiddleware() {
 	//A middleware can be prepended to the beginning of the middleware stack
 	assembly = assembly.Prepend(hello)
 
-	//With Serve(), the assembled middleware can be used without an explicit final handler
-	mux.Handle("/greetings", greetings.Serve())
-	mux.Handle("/direct", direct.Serve())
+	//Because of the no-op ServeHTTP implementation, any middleware can be used
+	//in a mux without an explicit final handler
+	mux.Handle("/greetings", greetings)
+	mux.Handle("/direct", direct)
 	//middleware can also be applied to a final handler
 	mux.Handle("/assembly", assembly.ApplyToFunc(handler))
 
