@@ -49,6 +49,20 @@ func GetWebsite(url string) string {
 	return string(html)
 }
 
+func GetWebsiteWithHeader(url string, headerName string , headerValue string ) string {
+	client := &http.Client{	}
+
+	request, _ := http.NewRequest("GET", url, nil)
+	request.Header.Add(headerName, headerValue)
+	resp, err := client.Do(request)
+	defer resp.Body.Close()
+	html, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		panic(err)
+	}
+	return string(html)
+}
+
 func ExampleMiddleware() {
 
 	mux := http.NewServeMux()
