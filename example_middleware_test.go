@@ -39,18 +39,18 @@ func GetGreeting(message string) func(http.Handler) http.Handler {
 	return fn
 }
 
-func GetWebsite(url string) string {
+func GetWebsite(url string) (string, string) {
 	resp, err := http.Get(url)
 	defer resp.Body.Close()
 	html, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		panic(err)
 	}
-	return string(html)
+	return string(html), resp.Status
 }
 
-func GetWebsiteWithHeader(url string, headerName string , headerValue string ) string {
-	client := &http.Client{	}
+func GetWebsiteWithHeader(url string, headerName string, headerValue string) (string, string) {
+	client := &http.Client{}
 
 	request, _ := http.NewRequest("GET", url, nil)
 	request.Header.Add(headerName, headerValue)
@@ -60,7 +60,7 @@ func GetWebsiteWithHeader(url string, headerName string , headerValue string ) s
 	if err != nil {
 		panic(err)
 	}
-	return string(html)
+	return string(html), resp.Status
 }
 
 func ExampleMiddleware() {
@@ -97,9 +97,12 @@ func ExampleMiddleware() {
 
 	go func() { log.Fatal(http.ListenAndServe("localhost:9191", mux)) }()
 
-	fmt.Println(GetWebsite("http://localhost:9191/greetings"))
-	fmt.Println(GetWebsite("http://localhost:9191/direct"))
-	fmt.Println(GetWebsite("http://localhost:9191/assembly"))
+	content, _ := GetWebsite("http://localhost:9191/greetings")
+	fmt.Println(content)
+	content, _ = GetWebsite("http://localhost:9191/direct")
+	fmt.Println(content)
+	content, _ = GetWebsite("http://localhost:9191/assembly")
+	fmt.Println(content)
 
 	// Output:
 	// Hello!

@@ -26,6 +26,7 @@ func (ipf ipFilter) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if err == nil && isPermittedIP {
 		ipf.next.ServeHTTP(w, r)
 	} else {
+		w.WriteHeader(403)
 		log.Printf("IP %s is not permitted to access %s \n", ip, r.URL)
 	}
 

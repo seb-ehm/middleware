@@ -29,10 +29,14 @@ func ExampleIPFilter() {
 
 	go func() { log.Fatal(http.ListenAndServe("localhost:9192", mux)) }()
 
-	fmt.Println(GetWebsite("http://localhost:9192/nolocalhost"))
-	fmt.Println(GetWebsite("http://localhost:9192/localhost"))
-	fmt.Println(GetWebsiteWithHeader("http://localhost:9192/localhostinheader", "X-FORWARDED-FOR", "127.0.0.1"))
+	_, status := GetWebsite("http://localhost:9192/nolocalhost")
+	fmt.Println(status)
+	content, _ := GetWebsite("http://localhost:9192/localhost")
+	fmt.Println(content)
+	content, _ = GetWebsiteWithHeader("http://localhost:9192/localhostinheader", "X-FORWARDED-FOR", "127.0.0.1")
+	fmt.Println(content)
 	// Output:
+	// 403 Forbidden
 	// Hi!
 	//
 	// Hi!
