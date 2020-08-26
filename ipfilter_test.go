@@ -79,7 +79,7 @@ func Test_convertToIPNet(t *testing.T) {
 		wantErr bool
 	}{
 		{ "invalid IPNet", args {[]string{"999.999.999"}}, nil, true},
-		{ "ipv6 localhost no /", args {[]string{"::1/128"}}, []*net.IPNet{&localhostIPv4, &localhostIPv6}, false},
+		{ "ipv6 localhost no /", args {[]string{"::1"}}, []*net.IPNet{&localhostIPv4, &localhostIPv6}, false},
 	}
 		for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
