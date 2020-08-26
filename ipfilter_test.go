@@ -34,7 +34,6 @@ func Test_isPermittedIP(t *testing.T) {
 	singleIPNoSuffix, _ := convertToIPNet([]string{"192.168.1.1"})
 	localhostIPv4, _ := convertToIPNet([]string{"127.0.0.1/32"})
 	localhostIPv6, _ := convertToIPNet([]string{"::1/128"})
-	net4, _ := convertToIPNet([]string{"::1/128"})
 	tests := []struct {
 		name    string
 		args    args
