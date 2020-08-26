@@ -69,6 +69,9 @@ func Test_convertToIPNet(t *testing.T) {
 	type args struct {
 		ipRanges []string
 	}
+	localhostIPv6 := net.IPNet{IP: net.IPv6loopback, Mask: net.CIDRMask(128, 128)}
+	localhostIPv4 := net.IPNet{IP: net.IPv4(127, 0, 0, 0), Mask: net.CIDRMask(8, 32)}
+
 	tests := []struct {
 		name    string
 		args    args
@@ -76,6 +79,7 @@ func Test_convertToIPNet(t *testing.T) {
 		wantErr bool
 	}{
 		{ "invalid IPNet", args {[]string{"999.999.999"}}, nil, true},
+		{ "ipv6 localhost no /", args {[]string{"::1/128"}}, []*net.IPNet{&localhostIPv4, &localhostIPv6}, false},
 	}
 		for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
