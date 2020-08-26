@@ -2,6 +2,7 @@ package middleware_test
 
 import (
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 
@@ -27,7 +28,6 @@ type Greeting struct {
 //ServeHTTP prints both to the response body and stdout and calls the next middleware afterwards
 func (g Greeting) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, g.message)
-	fmt.Println(g.message)
 	g.next.ServeHTTP(w, r)
 }
 
@@ -39,13 +39,22 @@ func GetGreeting(message string) func(http.Handler) http.Handler {
 	return fn
 }
 
+func GetWebsite(url string) (string) {
+	resp, err := http.Get(url)
+	defer resp.Body.Close()
+	html, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		panic(err)
+	}
+	return string(html)
+}
+
 func ExampleMiddleware() {
 
 	mux := http.NewServeMux()
 	//Some handler that prints both to stdout and the http response
 	handler := func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintln(w, "Hi!")
-		fmt.Println("Hi!")
 	}
 	//Create two middlewares that output different greetings
 	hello := GetGreeting("Hello!")
@@ -74,27 +83,17 @@ func ExampleMiddleware() {
 
 	go func() { log.Fatal(http.ListenAndServe("localhost:9191", mux)) }()
 
-	_, err := http.Get("http://localhost:9191/greetings")
-	if err != nil {
-		log.Fatalln(err)
-	}
-	fmt.Println("---")
-	_, err = http.Get("http://localhost:9191/direct")
-	if err != nil {
-		log.Fatalln(err)
-	}
-	fmt.Println("---")
-	_, err = http.Get("http://localhost:9191/assembly")
-	if err != nil {
-		log.Fatalln(err)
-	}
+	fmt.Println(GetWebsite("http://localhost:9191/greetings"))
+	fmt.Println(GetWebsite("http://localhost:9191/direct"))
+	fmt.Println(GetWebsite("http://localhost:9191/assembly"))
+
 	// Output:
 	// Hello!
 	// Namaste!
-	// ---
+    //
 	// Namaste!
 	// Hello!
-	// ---
+	//
 	// Hello!
 	// Hello!
 	// Namaste!
