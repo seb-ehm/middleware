@@ -34,10 +34,9 @@ func (ipf ipFilter) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 func isPermittedIP(remoteIP string, permittedNets []*net.IPNet) (bool, error) {
 	ip := getIpFromString(remoteIP)
 	if ip == nil {
-		return false, fmt.Errorf("Invalid IP: %s", remoteIP)
+		return false, fmt.Errorf("invalid IP: %s", remoteIP)
 	}
 	for _, prmn := range permittedNets {
-		fmt.Println(prmn)
 		if prmn.Contains(ip){
 			return true, nil
 		}
