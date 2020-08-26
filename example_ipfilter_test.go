@@ -31,7 +31,7 @@ func ExampleIPFilter() {
 
 	fmt.Println(GetWebsite("http://localhost:9192/nolocalhost"))
 	fmt.Println(GetWebsite("http://localhost:9192/localhost"))
-	fmt.Println(GetWebsiteWithHeader("http://localhost:9192/localhost", "X-FORWARDED-FOR", "127.0.0.1"))
+	fmt.Println(GetWebsiteWithHeader("http://localhost:9192/localhostinheader", "X-FORWARDED-FOR", "127.0.0.1"))
 	// Output:
 	// Hi!
 	//

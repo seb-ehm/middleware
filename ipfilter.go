@@ -97,10 +97,9 @@ func getIpFromString(addr string) net.IP {
 		addr = strings.ReplaceAll(addr, string(c), "")
 	}
 	colonIndex := strings.LastIndex(addr, ":")
-	if colonIndex == -1 {
-		return nil
+	if colonIndex != -1 {
+		addr = addr[:strings.LastIndex(addr, ":")]
 	}
-	addr = addr[:strings.LastIndex(addr, ":")]
 	ip := net.ParseIP(addr)
 	return ip
 }
