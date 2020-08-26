@@ -89,7 +89,6 @@ func convertToIPNet(ipRanges []string) ([]*net.IPNet, error) {
 		}
 		ipNets = append(ipNets, ipNet)
 	}
-	fmt.Println(ipNets)
 	return ipNets, nil
 }
 
