@@ -39,7 +39,7 @@ func GetGreeting(message string) func(http.Handler) http.Handler {
 	return fn
 }
 
-func GetWebsite(url string) (string) {
+func GetWebsite(url string) string {
 	resp, err := http.Get(url)
 	defer resp.Body.Close()
 	html, err := ioutil.ReadAll(resp.Body)
@@ -90,7 +90,7 @@ func ExampleMiddleware() {
 	// Output:
 	// Hello!
 	// Namaste!
-    //
+	//
 	// Namaste!
 	// Hello!
 	//

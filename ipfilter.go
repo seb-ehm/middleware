@@ -9,9 +9,9 @@ import (
 )
 
 type ipFilter struct {
-	next    http.Handler
-	permittedNets []* net.IPNet
-	ipHeader  string
+	next          http.Handler
+	permittedNets []*net.IPNet
+	ipHeader      string
 }
 
 func (ipf ipFilter) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -26,7 +26,7 @@ func (ipf ipFilter) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if err == nil && isPermittedIP {
 		ipf.next.ServeHTTP(w, r)
 	} else {
-		log.Printf("IP %s is not permitted to access %s \n", ip, r.URL )
+		log.Printf("IP %s is not permitted to access %s \n", ip, r.URL)
 	}
 
 }
@@ -37,7 +37,7 @@ func isPermittedIP(remoteIP string, permittedNets []*net.IPNet) (bool, error) {
 		return false, fmt.Errorf("invalid IP: %s", remoteIP)
 	}
 	for _, prmn := range permittedNets {
-		if prmn.Contains(ip){
+		if prmn.Contains(ip) {
 			return true, nil
 		}
 	}
@@ -47,7 +47,7 @@ func isPermittedIP(remoteIP string, permittedNets []*net.IPNet) (bool, error) {
 
 func IPFilter(ipRanges []string, header string) func(http.Handler) http.Handler {
 	permittedNets, err := convertToIPNet(ipRanges)
-	if err != nil{
+	if err != nil {
 		panic(fmt.Sprintf("Failed to convert ip ranges %s", err))
 	}
 	fn := func(next http.Handler) http.Handler {
@@ -58,14 +58,14 @@ func IPFilter(ipRanges []string, header string) func(http.Handler) http.Handler 
 
 func convertToIPNet(ipRanges []string) ([]*net.IPNet, error) {
 	var ipNets []*net.IPNet
-	for _, ipr := range ipRanges{
+	for _, ipr := range ipRanges {
 		// allow special values for localhost
-		if ipr == "localhost" || ipr == "loopback"{
+		if ipr == "localhost" || ipr == "loopback" {
 			ipr = "::1/128"
 		}
 		// allow single IP addresses without CIDR suffix
-		if strings.Index(ipr, "/") == -1{
-			if strings.Index(ipr, ".") !=-1 { //assume IPv4
+		if strings.Index(ipr, "/") == -1 {
+			if strings.Index(ipr, ".") != -1 { //assume IPv4
 				ipr += "/32"
 			} else if strings.Index(ipr, ":") != -1 { //assume IPv6
 				ipr += "/128"
@@ -74,11 +74,11 @@ func convertToIPNet(ipRanges []string) ([]*net.IPNet, error) {
 			}
 		}
 		_, ipNet, err := net.ParseCIDR(ipr)
-		if err!=nil{
+		if err != nil {
 			return nil, err
 		}
 
-		if  ipNet.IP.IsLoopback() {
+		if ipNet.IP.IsLoopback() {
 			if ipNet.IP.To4() != nil { // Add IPv6 loopback if permitted range is IPv4 loopback
 				loopbackIPv6 := net.IPNet{IP: net.IPv6loopback, Mask: net.CIDRMask(128, 128)}
 				ipNets = append(ipNets, &loopbackIPv6)
@@ -104,5 +104,3 @@ func getIpFromString(addr string) net.IP {
 	ip := net.ParseIP(addr)
 	return ip
 }
-
-

@@ -14,10 +14,10 @@ func ExampleIPFilter() {
 		fmt.Fprintln(w, "Hi!")
 	}
 
-	allowSomeIP:= middleware.IPFilter([]string{"123.240.189.1/32"}, "")
+	allowSomeIP := middleware.IPFilter([]string{"123.240.189.1/32"}, "")
 	noLocalhost := middleware.New().Append(allowSomeIP)
 
-	allowLocalhost:= middleware.IPFilter([]string{"localhost"}, "")
+	allowLocalhost := middleware.IPFilter([]string{"localhost"}, "")
 	localhost := middleware.New().Append(allowLocalhost)
 	mux.Handle("/nolocalhost", noLocalhost.ApplyToFunc(handler))
 	mux.Handle("/localhost", localhost.ApplyToFunc(handler))
@@ -30,4 +30,3 @@ func ExampleIPFilter() {
 	// Output:
 	// Hi!
 }
-
