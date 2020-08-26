@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"net"
+	"reflect"
 	"testing"
 )
 
@@ -59,6 +60,32 @@ func Test_isPermittedIP(t *testing.T) {
 			}
 			if got != tt.want {
 				t.Errorf("isPermittedIP() got = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_convertToIPNet(t *testing.T) {
+	type args struct {
+		ipRanges []string
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    []*net.IPNet
+		wantErr bool
+	}{
+		{ "invalid IPNet", args {[]string{"999.999.999"}}, nil, true},
+	}
+		for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := convertToIPNet(tt.args.ipRanges)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("convertToIPNet() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("convertToIPNet() got = %v, want %v", got, tt.want)
 			}
 		})
 	}
