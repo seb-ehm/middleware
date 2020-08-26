@@ -17,6 +17,7 @@ func Test_getIpFromString(t *testing.T) {
 		{"IPv4 in quotes", "\"127.0.0.1:1234\"", net.ParseIP("127.0.0.1")},
 		{"localhost IPv6", "[::1]:57048", net.ParseIP("::1")},
 		{"IPv6 in quotes", "\"[::1]\":57048", net.ParseIP("::1")},
+		{ "Invalid IP", "aabbccd", nil},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -41,6 +42,7 @@ func Test_isPermittedIP(t *testing.T) {
 		want    bool
 		wantErr bool
 	}{
+		{"Invalid IP", args{"aabbcc", localhostIPv4}, false, true},
 		{"Localhost IPv4 ", args{"127.0.0.1:1234", localhostIPv4}, true, false},
 		{"Localhost IPv6 ", args{"[::1]:57048", localhostIPv6}, true, false},
 		{"Single IPv4 No Suffix ", args{"192.168.1.1:1234", singleIPNoSuffix}, true, false},
@@ -78,6 +80,7 @@ func Test_convertToIPNet(t *testing.T) {
 		want    []*net.IPNet
 		wantErr bool
 	}{
+		{"invalid characters", args{[]string{"abcdefg", "hijklmnop"}}, nil, true},
 		{"invalid IPNet", args{[]string{"999.999.999"}}, nil, true},
 		{"ipv6 localhost no /", args{[]string{"::1"}}, []*net.IPNet{&localhostIPv4, &localhostIPv6}, false},
 	}
