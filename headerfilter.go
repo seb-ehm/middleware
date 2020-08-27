@@ -1,7 +1,9 @@
 package middleware
 
 import (
+	"log"
 	"net/http"
+	"net/textproto"
 )
 
 type headerFilter struct {
@@ -16,13 +18,15 @@ func (he headerFilter) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		he.next.ServeHTTP(w, r)
 	} else {
 		w.WriteHeader(403)
+		log.Printf("IP %s is not permitted to access %s : header verification failed. Supplied headers: %v \n", r.RemoteAddr, r.URL, r.Header)
 	}
 }
 
 func AllHeadersPresent(requiredHeaders http.Header, requestHeaders http.Header) bool {
 	allHeadersPresent := true
 	for requiredKey, requiredValues := range requiredHeaders {
-		requestValues := requestHeaders[requiredKey]
+		requiredKey = textproto.CanonicalMIMEHeaderKey(requiredKey)
+		requestValues := requestHeaders.Values(requiredKey)
 		if requestValues == nil {
 			allHeadersPresent = false
 			break
@@ -36,7 +40,6 @@ func AllHeadersPresent(requiredHeaders http.Header, requestHeaders http.Header) 
 		for _, v := range requestValues {
 			requestValueMap[v] = true
 		}
-
 		for _, requiredValue := range requiredValues {
 			if !requestValueMap[requiredValue] {
 				allHeadersPresent = false

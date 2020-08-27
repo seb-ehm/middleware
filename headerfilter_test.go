@@ -11,11 +11,11 @@ func TestAllHeadersPresent(t *testing.T) {
 		requestHeaders  http.Header
 	}
 
-	singleHeader := map[string][]string{"secretkey": {"secretvalue"}}
-	wrongValue := map[string][]string{"secretkey": {"wrongvalue"}}
-	wrongHeader := map[string][]string{"wrongkey": {"wrongvalue"}}
-	multipleHeaders:= map[string][]string{"secretkey": {"secretvalue"}, "otherkey": {"othervalue"}}
-	multipleValues := map[string][]string{"secretkey": {"secretvalue", "secretvalue2"}}
+	singleHeader := map[string][]string{"Secretkey": {"secretvalue"}}
+	wrongValue := map[string][]string{"Secretkey": {"wrongvalue"}}
+	wrongHeader := map[string][]string{"Wrongkey": {"wrongvalue"}}
+	multipleHeaders:= map[string][]string{"Secretkey": {"secretvalue"}, "Otherkey": {"othervalue"}}
+	multipleValues := map[string][]string{"Secretkey": {"secretvalue", "secretvalue2"}}
 
 	tests := []struct {
 		name string
