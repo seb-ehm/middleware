@@ -3,7 +3,6 @@ package middleware
 import (
 	"log"
 	"net/http"
-	"net/textproto"
 )
 
 type headerFilter struct {
@@ -25,7 +24,6 @@ func (he headerFilter) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 func AllHeadersPresent(requiredHeaders http.Header, requestHeaders http.Header) bool {
 	allHeadersPresent := true
 	for requiredKey, requiredValues := range requiredHeaders {
-		requiredKey = textproto.CanonicalMIMEHeaderKey(requiredKey)
 		requestValues := requestHeaders.Values(requiredKey)
 		if requestValues == nil {
 			allHeadersPresent = false
