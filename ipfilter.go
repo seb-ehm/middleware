@@ -18,6 +18,7 @@ func (ipf ipFilter) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	var ip string
 	if ipf.ipHeader != "" {
+		//Get returns the first value for a header. In headers with multiple values, this should be the client ip
 		ip = r.Header.Get(ipf.ipHeader)
 	} else {
 		ip = r.RemoteAddr
