@@ -50,10 +50,8 @@ func AllHeadersPresent(requiredHeaders http.Header, requestHeaders http.Header) 
 
 func FilterHeaders(headers http.Header) func(http.Handler) http.Handler {
 
-
 	fn := func(next http.Handler) http.Handler {
 		return headerFilter{next, headers}
 	}
 	return fn
 }
-

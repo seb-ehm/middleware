@@ -31,4 +31,3 @@ func ExampleHeaderFilter() {
 	// 403 Forbidden
 	// Hi!
 }
-

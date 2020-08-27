@@ -14,7 +14,7 @@ func TestAllHeadersPresent(t *testing.T) {
 	singleHeader := map[string][]string{"Secretkey": {"secretvalue"}}
 	wrongValue := map[string][]string{"Secretkey": {"wrongvalue"}}
 	wrongHeader := map[string][]string{"Wrongkey": {"wrongvalue"}}
-	multipleHeaders:= map[string][]string{"Secretkey": {"secretvalue"}, "Otherkey": {"othervalue"}}
+	multipleHeaders := map[string][]string{"Secretkey": {"secretvalue"}, "Otherkey": {"othervalue"}}
 	multipleValues := map[string][]string{"Secretkey": {"secretvalue", "secretvalue2"}}
 
 	tests := []struct {
@@ -22,14 +22,14 @@ func TestAllHeadersPresent(t *testing.T) {
 		args args
 		want bool
 	}{
-		{ "Single Header Single Value present", args{singleHeader,singleHeader}, true },
-		{ "Single Header Single Value missing", args{singleHeader,nil}, false },
-		{ "Single Header wrong value", args{singleHeader,wrongValue}, false },
-		{ "Single Header wrong header", args{singleHeader,wrongHeader}, false },
-		{ "Multiple Headers present", args{multipleHeaders,multipleHeaders}, true },
-		{ "Multiple Headers, one missing", args{multipleHeaders,singleHeader}, false },
-		{ "Multiple Values present", args{multipleValues,multipleValues}, true },
-		{ "Multiple Values, one missing", args{multipleValues,singleHeader}, false },
+		{"Single Header Single Value present", args{singleHeader, singleHeader}, true},
+		{"Single Header Single Value missing", args{singleHeader, nil}, false},
+		{"Single Header wrong value", args{singleHeader, wrongValue}, false},
+		{"Single Header wrong header", args{singleHeader, wrongHeader}, false},
+		{"Multiple Headers present", args{multipleHeaders, multipleHeaders}, true},
+		{"Multiple Headers, one missing", args{multipleHeaders, singleHeader}, false},
+		{"Multiple Values present", args{multipleValues, multipleValues}, true},
+		{"Multiple Values, one missing", args{multipleValues, singleHeader}, false},
 	}
 
 	for _, tt := range tests {

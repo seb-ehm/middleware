@@ -17,7 +17,7 @@ func Test_getIpFromString(t *testing.T) {
 		{"IPv4 in quotes", "\"127.0.0.1:1234\"", net.ParseIP("127.0.0.1")},
 		{"localhost IPv6", "[::1]:57048", net.ParseIP("::1")},
 		{"IPv6 in quotes", "\"[::1]\":57048", net.ParseIP("::1")},
-		{ "Invalid IP", "aabbccd", nil},
+		{"Invalid IP", "aabbccd", nil},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
