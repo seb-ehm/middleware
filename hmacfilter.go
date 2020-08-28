@@ -2,17 +2,22 @@ package middleware
 
 import (
 	"bytes"
+	"crypto"
 	"crypto/hmac"
+	"crypto/sha1"
 	"crypto/sha256"
+	"encoding/hex"
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 )
 
 type hmacFilter struct {
-	next       http.Handler
-	secret     string
-	hmacHeader string
+	next        http.Handler
+	secret      string
+	parameterFn func(r *http.Request) (string, string)
+	verifyHmac  func([]byte, []byte, []byte, byte[]) bool
 }
 
 func (hm hmacFilter) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -32,11 +37,43 @@ func (hm hmacFilter) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func HmacFilter(secret string, hmacHeader string) func(http.Handler) http.Handler {
-	_ = secret
-	_ = hmacHeader
+func HmacFilter(provider string, secretEnv string) func(http.Handler) http.Handler {
+	var parameterFn func(*http.Request, string) (string, string, string)
+	var verifyFn func([]byte, []byte, []byte, []byte) bool
+	switch provider {
+	case "github":
+		{
+			parameterFn = func(r *http.Request, secretEnv string) (string, string, string) {
+				messageMAC := r.Header.Get("X-Hub-Signature")
+				secret := os.Getenv(secretEnv)
+				messageNonce := ""
+				return messageMAC, messageNonce, secret
+			}
+			verifyFn = func(message, messageMAC, messageNonce, key []byte) bool {
+				mac := hmac.New(sha1.New, key)
+				mac.Write(message)
+				expected := mac.Sum(nil)
+				return hmac.Equal(messageMAC[5:], expected)
+			}
+		}
+	default:
+		{
+			parameterFn = func(r *http.Request, secretEnv string) (string, string) {
+				messageMAC := r.Header.Get()
+				return "", ""
+			}
+			verifyFn = func(message, messageMAC, messageNonce, key []byte) bool {
+				mac := hmac.New(sha1.New, key)
+				mac.Write(message)
+				expected := mac.Sum(nil)
+				return hmac.Equal(messageMAC[5:], expected)
+			}
+		}
+
+	}
+
 	return func(next http.Handler) http.Handler {
-		return hmacFilter{next, secret, hmacHeader}
+		return hmacFilter{next, os.Getenv(secretEnv), parameterFn, verifyFn}
 	}
 }
 
