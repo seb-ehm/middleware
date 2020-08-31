@@ -135,10 +135,3 @@ func GithubValidation(params HmacParams) func(r *http.Request, message []byte) (
 		return hmac.Equal([]byte(messageMAC[5:]), []byte(expected)), nil
 	}
 }
-
-func ValidMAC(message, messageMAC, key []byte) bool {
-	mac := hmac.New(sha256.New, key)
-	mac.Write(message)
-	expectedMAC := mac.Sum(nil)
-	return hmac.Equal(messageMAC, expectedMAC)
-}
