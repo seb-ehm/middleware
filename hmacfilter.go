@@ -6,6 +6,7 @@ import (
 	"crypto/sha1"
 	"crypto/sha256"
 	"encoding/base64"
+	"encoding/hex"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -117,7 +118,7 @@ func DefaultValidation(params HmacParams) func(r *http.Request, message []byte) 
 
 func GithubValidation(params HmacParams) func(r *http.Request, message []byte) (bool, error) {
 	return func(r *http.Request, message []byte) (bool, error) {
-		messageMAC := []byte(r.Header.Get("X-Hub-Signature"))
+		messageMAC := r.Header.Get("X-Hub-Signature")
 		if len(messageMAC) == 0 {
 			err := fmt.Errorf("missing HMAC header")
 			return false, err
@@ -129,12 +130,8 @@ func GithubValidation(params HmacParams) func(r *http.Request, message []byte) (
 		}
 		mac := hmac.New(sha1.New, []byte(params.Secret))
 		mac.Write(message)
-		expected := mac.Sum(nil)
-		test := messageMAC[5:]
-		_ = test
-		test2,_ :=  base64.StdEncoding.DecodeString(string(test))
-		_ = test2
-		return hmac.Equal(messageMAC[5:], expected), nil
+		expected := hex.EncodeToString(mac.Sum(nil))
+		return hmac.Equal([]byte(messageMAC[5:]), []byte(expected)), nil
 	}
 }
 
