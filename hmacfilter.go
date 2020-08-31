@@ -119,8 +119,8 @@ func DefaultValidation(params HmacParams) func(r *http.Request, message []byte) 
 func GithubValidation(params HmacParams) func(r *http.Request, message []byte) (bool, error) {
 	return func(r *http.Request, message []byte) (bool, error) {
 		messageMAC := r.Header.Get("X-Hub-Signature")
-		if len(messageMAC) == 0 {
-			err := fmt.Errorf("missing HMAC header")
+		if len(messageMAC) != 45 {
+			err := fmt.Errorf("invalid HMAC header length")
 			return false, err
 		}
 
@@ -128,6 +128,7 @@ func GithubValidation(params HmacParams) func(r *http.Request, message []byte) (
 			err := fmt.Errorf("empty HMAC secret")
 			return false, err
 		}
+
 		mac := hmac.New(sha1.New, []byte(params.Secret))
 		mac.Write(message)
 		expected := hex.EncodeToString(mac.Sum(nil))
