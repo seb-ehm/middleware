@@ -12,6 +12,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -21,13 +22,13 @@ type hmacFilter struct {
 }
 
 type HmacParams struct {
-	Provider      string
-	Secret        string
-	HmacSource    string
-	NonceSource   string
-	TimeSource    string
-	Base64Encoded bool
-	IncludeURL    bool
+	Provider    string
+	Secret      string
+	HmacSource  string
+	NonceSource string
+	TimeSource  string
+	Encoding    string
+	IncludeURL  bool
 }
 
 func (hm hmacFilter) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -79,14 +80,33 @@ func DefaultValidation(params HmacParams) func(r *http.Request, message []byte) 
 		secret := []byte(params.Secret)
 
 		var err error
-		if params.Base64Encoded {
-			secret, err = base64.StdEncoding.DecodeString(string(secret))
-			if err != nil {
-				return false, fmt.Errorf("invalid secret: %w", err)
-			}
-			messageMAC, err = base64.StdEncoding.DecodeString(string(messageMAC))
-			if err != nil {
-				return false, fmt.Errorf("invalid signature in header %s: %w", params.HmacSource, err)
+
+		if params.Encoding != "" {
+			switch strings.ToLower(params.Encoding) {
+			case "base64":
+				{
+					secret, err = base64.StdEncoding.DecodeString(string(secret))
+					if err != nil {
+						return false, fmt.Errorf("invalid secret: %w", err)
+					}
+					messageMAC, err = base64.StdEncoding.DecodeString(string(messageMAC))
+					if err != nil {
+						return false, fmt.Errorf("invalid signature in header %s: %w", params.HmacSource, err)
+					}
+				}
+			case "hex":
+				{
+					secret, err = hex.DecodeString(string(secret))
+					if err != nil {
+						return false, fmt.Errorf("invalid secret: %w", err)
+					}
+					messageMAC, err = hex.DecodeString(string(messageMAC))
+					if err != nil {
+						return false, fmt.Errorf("invalid signature in header %s: %w", params.HmacSource, err)
+					}
+				}
+			default:
+				return false, fmt.Errorf("invalid encoding %s", params.Encoding)
 			}
 		}
 
