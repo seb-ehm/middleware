@@ -66,7 +66,7 @@ func GetWebsiteWithHeader(url string, headerName string, headerValue string) (st
 func ExampleMiddleware() {
 
 	mux := http.NewServeMux()
-	//Some handler that prints both to stdout and the http response
+	//Some handler that prints to the http response
 	handler := func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintln(w, "Hi!")
 	}
