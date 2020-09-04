@@ -5,6 +5,7 @@ import (
 	"log"
 	"net"
 	"net/http"
+	"net/textproto"
 	"strings"
 )
 
@@ -18,6 +19,11 @@ func (ipf ipFilter) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	var ip string
 	if ipf.ipHeader != "" {
+		_, ok := r.Header[ipf.ipHeader]
+		if !ok{
+			log.Printf("Required IP Header %s missing in request to %s from IP %s : Supplied headers: %v \n", ipf.ipHeader, r.URL, r.RemoteAddr, r.Header)
+			return
+		}
 		//Get returns the first value for a header. In headers with multiple values, this should be the client ip
 		ip = r.Header.Get(ipf.ipHeader)
 	} else {
@@ -52,6 +58,7 @@ func IPFilter(ipRanges []string, header string) func(http.Handler) http.Handler 
 	if err != nil {
 		panic(fmt.Sprintf("Failed to convert ip ranges %s", err))
 	}
+	header = textproto.CanonicalMIMEHeaderKey(header)
 	fn := func(next http.Handler) http.Handler {
 		return ipFilter{next, permittedNets, header}
 	}
